@@ -6,9 +6,8 @@ class Rook(ChessPiece):
         super().__init__(position=position,
                          color=color,
                          Chessboard=Chessboard)
-        y,x = position
-        self.Chessboard.chessboard[y][x] = self
-        self.attacking_squares = self.refresh_possible_moves()
+        self.attacking_squares = []
+        self.piece_name = 'rook'
 
     def __repr__(self):
         return 'R'
@@ -21,6 +20,7 @@ class Rook(ChessPiece):
         if new_square in self.attacking_squares:
             self.position = new_square
             self.attacking_squares = self.refresh_possible_moves()
+            self.Chessboard.update_threatened_squares(color=self.color)
         else:
             print(f'Move to square {new_square}not possible, handle error')
 
@@ -64,4 +64,4 @@ class Rook(ChessPiece):
                 break
             else:
                 break
-        return attacking_squares
+        self.attacking_squares = attacking_squares

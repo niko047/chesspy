@@ -3,6 +3,7 @@ from pawn import Pawn
 from bishop import Bishop
 from queen import Queen
 from knight import Knight
+from king import King
 
 class Chessboard:
 
@@ -10,6 +11,15 @@ class Chessboard:
         self.chessboard = [
             [0 for i in range(8)] for i in range(8)
         ]
+        self.initial_setup()
+        #Update the threatening position of every piece and the overall threatens of the player
+        for y in range(len(self.chessboard)):
+            for x in range(len(self.chessboard[y])):
+                if self.chessboard[y][x]:
+                    self.chessboard[y][x].refresh_possible_moves()
+
+        self.black_threatens = self.get_all_threatened_squares(threatening='black')
+        self.white_threatens = self.get_all_threatened_squares(threatening='white')
 
     def __repr__(self):
         res = ''
@@ -49,40 +59,35 @@ class Chessboard:
                 Queen(position=(y, 3), color='black', Chessboard=self)
 
         for y in [0,7]:
-            for x in [1,6]:
-                self.chessboard[y][2] = \
+            for x in [2,5]:
+                self.chessboard[y][x] = \
                     Knight(position=(y,x), color='white', Chessboard=self) if y else \
                     Knight(position=(y,x), color='black', Chessboard=self)
 
+        for y in [0,7]:
+            self.chessboard[y][4] = \
+                King(position=(y, 4), color='white', Chessboard=self) if y else \
+                King(position=(y, 4), color='black', Chessboard=self)
 
-    def is_legal_move(self, move: tuple, color: str) -> bool:
-        """
-        Checks whether a move is valid or not.
-        Does not check for piece-specific moves, just for two general rules:
-        1. New move needs to be inside chessboard boundaries
-        2. No overlapping between same color pieces in the chessboard
-        """
-        y, x = move
-        if not 0 <= y <= 7 or not 0 <= x <= 7:
-            return False
-        if self.chessboard[y][x].color == color:
-            return False
-        return True
 
     def occupied_squares(self):
         """Returns the list of occupied squares in the chessboard"""
         return [(y, x) for y in self.chessboard for x in y if self.chessboard[y][x]]
 
+    def update_threatened_squares(self, piece):
+        match piece.color:
+            case 'white':
+                self.white_threatens = self.get_all_threatened_squares(threatening='white')
+            case 'black':
+                self.black_threatens = self.get_all_threatened_squares(threatening='black')
 
+    def get_all_threatened_squares(self, threatening: str):
+        #Function used especially for kings, since they cannot move to squares which are threatened
+        threatened_squares = []
 
-
-
-
-
-
-
-
-
-
-
-
+        for y in range(len(self.chessboard)):
+            for x in range(len(self.chessboard[y])):
+                if self.chessboard[y][x]:
+                    threatened_squares.extend(self.chessboard[y][x].attacking_squares) if \
+                        self.chessboard[y][x].color == threatening else None
+        return threatened_squares

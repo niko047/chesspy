@@ -9,9 +9,8 @@ class Pawn(ChessPiece):
         super().__init__(position=position,
                          color=color,
                          Chessboard=Chessboard)
-        y,x = position
-        #self.Chessboard.chessboard[y][x] = self
-        self.attacking_squares = self.refresh_possible_moves()
+        self.attacking_squares = []
+        self.piece_name = 'pawn'
 
     def __repr__(self):
         return 'p'
@@ -25,6 +24,7 @@ class Pawn(ChessPiece):
         if new_square in self.attacking_squares:
             self.position = new_square
             self.attacking_squares = self.refresh_possible_moves()
+            self.Chessboard.update_threatened_squares(color=self.color)
         else:
             print(f'Move to square {new_square}not possible, handle error')
 
@@ -37,18 +37,18 @@ class Pawn(ChessPiece):
         match self.color:
             case 'white':
                 #Check that it's not at the borders of the board
-                if y == 0:
-                    self.attacking_squares = [(y+1, x+1)]
-                elif y == 7:
+                if x == 0:
                     self.attacking_squares = [(y-1, x+1)]
+                elif x == 7:
+                    self.attacking_squares = [(y-1, x-1)]
                 else:
-                    self.attacking_squares = [(y+1, x+1), (y-1, x+1)]
+                    self.attacking_squares = [(y-1, x+1), (y-1, x-1)]
 
             case 'black':
                 if y == 0:
-                    self.attacking_squares = [(y + 1, x - 1)]
+                    self.attacking_squares = [(y + 1, x + 1)]
                 elif y == 7:
-                    self.attacking_squares = [(y - 1, x - 1)]
+                    self.attacking_squares = [(y + 1, x - 1)]
                 else:
-                    self.attacking_squares = [(y + 1, x - 1), (y - 1, x - 1)]
+                    self.attacking_squares = [(y + 1, x + 1), (y + 1, x - 1)]
 
