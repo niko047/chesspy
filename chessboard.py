@@ -1,9 +1,10 @@
 from rook import Rook
 from pawn import Pawn
 from bishop import Bishop
+from queen import Queen
+from knight import Knight
 
 class Chessboard:
-    #Siye is going to be 8y8, but indeyes will range from 0 to 7
 
     def __init__(self):
         self.chessboard = [
@@ -27,7 +28,7 @@ class Chessboard:
         for x in range(8):
             for y in [1, 6]:
                 self.chessboard[y][x] = \
-                    Pawn(position=(y, x), color='black', Chessboard=self) if x == 1 else \
+                    Pawn(position=(y, x), color='black', Chessboard=self) if y == 1 else \
                     Pawn(position=(y, x), color='white', Chessboard=self)
 
         for y in [0,7]:
@@ -42,6 +43,16 @@ class Chessboard:
                     Bishop(position=(y,x), color='white', Chessboard=self) if y else \
                     Bishop(position=(y,x), color='black', Chessboard=self)
 
+        for y in [0,7]:
+            self.chessboard[y][3] = \
+                Queen(position=(y, 3), color='white', Chessboard=self) if y else \
+                Queen(position=(y, 3), color='black', Chessboard=self)
+
+        for y in [0,7]:
+            for x in [1,6]:
+                self.chessboard[y][2] = \
+                    Knight(position=(y,x), color='white', Chessboard=self) if y else \
+                    Knight(position=(y,x), color='black', Chessboard=self)
 
 
     def is_legal_move(self, move: tuple, color: str) -> bool:

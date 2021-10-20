@@ -15,7 +15,6 @@ class Bishop(ChessPiece):
     def move(self, new_square: tuple):
         """
         :param new_square: New square where the piece is supposed to go
-        :return: (is_move_legal, new_square)
         """
 
         if new_square in self.attacking_squares:
