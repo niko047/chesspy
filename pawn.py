@@ -1,9 +1,9 @@
 from chesspiece import ChessPiece
+from utils.coordinates_mapper import COORDINATE_MAPPER_X
 
 class Pawn(ChessPiece):
     #TODO - Handle promotion of the pawn to something else
     #TODO - Handle au passant
-    #TODO - Handle double initial move ahead
 
     def __init__(self, position: tuple, color: str, Chessboard) -> None:
         super().__init__(position=position,
@@ -11,6 +11,7 @@ class Pawn(ChessPiece):
                          Chessboard=Chessboard)
         self.attacking_squares = []
         self.piece_name = 'pawn'
+        self.algebraic_notation = COORDINATE_MAPPER_X[position[1]]
 
     def __repr__(self):
         return 'p'
@@ -21,34 +22,65 @@ class Pawn(ChessPiece):
         :return: (is_move_legal, new_square)
         """
 
-        if new_square in self.attacking_squares:
+        if new_square in self.attacking_squares :
+            old_y, old_x = self.position
+            new_y, new_x = new_square
+            self.Chessboard.chessboard[old_y][old_x] = 0
+            self.Chessboard.chessboard[new_y][new_x] = self
+
             self.position = new_square
-            self.attacking_squares = self.refresh_possible_moves()
-            self.Chessboard.update_threatened_squares(color=self.color)
+            #Updates the algebraic notation
+            self.algebraic_notation = COORDINATE_MAPPER_X[self.position[1]]
+            self.Chessboard.refresh_all_possible_moves()
         else:
             print(f'Move to square {new_square}not possible, handle error')
 
-
-    def refresh_possible_moves(self) -> list:
-        #Going to be a function of the position in the board
-        #A pawn can capture in diagonal bx going up the board for white (and down for black), therefore
-
+    def refresh_possible_moves(self):
+        attacking_squares = []
         y, x = self.position
         match self.color:
             case 'white':
-                #Check that it's not at the borders of the board
-                if x == 0:
-                    self.attacking_squares = [(y-1, x+1)]
-                elif x == 7:
-                    self.attacking_squares = [(y-1, x-1)]
-                else:
-                    self.attacking_squares = [(y-1, x+1), (y-1, x-1)]
+                #Speaking moving forward
+                if self.position[0] == 6:
+                    attacking_squares.extend([(self.position[0] - 1, self.position[1])])
+                    attacking_squares.extend([(self.position[0] - 2, self.position[1])])
+                elif self.position[0] > 0:
+                    attacking_squares.extend([(self.position[0] - 1, self.position[1])])
+
+                opponent_pieces_positions = self.Chessboard.occupied_squares(color='black')
+                # Check that it's not at the borders of the board
+                c1 = (y - 1, x + 1) in opponent_pieces_positions
+                c2 = (y - 1, x - 1) in opponent_pieces_positions
+
+                if c1 and c2:
+                    attacking_squares.extend([(y - 1, x + 1), (y - 1, x - 1)])
+                elif c2:
+                    attacking_squares.extend([(y - 1, x - 1)])
+                elif c1:
+                    attacking_squares.extend([(y - 1, x + 1)])
+
 
             case 'black':
-                if y == 0:
-                    self.attacking_squares = [(y + 1, x + 1)]
-                elif y == 7:
-                    self.attacking_squares = [(y + 1, x - 1)]
-                else:
-                    self.attacking_squares = [(y + 1, x + 1), (y + 1, x - 1)]
+                #Speaking captures of pieces
+
+                if self.position[0] == 1:
+                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])
+                    attacking_squares.extend([(self.position[0] + 2, self.position[1])])
+                elif self.position[0] < 7:
+                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])
+
+                opponent_pieces_positions = self.Chessboard.occupied_squares(color='white')
+
+                c1 = (y + 1, x + 1) in opponent_pieces_positions
+                c2 = (y + 1, x - 1) in opponent_pieces_positions
+
+                if c1 and c2:
+                    attacking_squares.extend([(y + 1, x + 1), (y + 1, x - 1)])
+                elif c1:
+                    attacking_squares.extend([(y + 1, x + 1)])
+                elif c2:
+                    attacking_squares.extend([(y + 1, x - 1)])
+
+
+        self.attacking_squares = attacking_squares
 

@@ -8,6 +8,7 @@ class Queen(ChessPiece):
                          Chessboard=Chessboard)
         self.attacking_squares = []
         self.piece_name = 'queen'
+        self.algebraic_notation = 'Q'
 
     def __repr__(self):
         return 'Q'
@@ -18,9 +19,13 @@ class Queen(ChessPiece):
         """
 
         if new_square in self.attacking_squares:
+            old_y, old_x = self.position
+            new_y, new_x = new_square
+            self.Chessboard.chessboard[old_y][old_x] = 0
+            self.Chessboard.chessboard[new_y][new_x] = self
+
             self.position = new_square
-            self.attacking_squares = self.refresh_possible_moves()
-            self.Chessboard.update_threatened_squares(color=self.color)
+            self.Chessboard.refresh_all_possible_moves()
         else:
             print(f'Move to square {new_square}not possible, handle error')
 

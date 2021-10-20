@@ -8,6 +8,7 @@ class King(ChessPiece):
                          Chessboard=Chessboard)
         self.attacking_squares = []
         self.piece_name = 'king'
+        self.algebraic_notation = 'K'
 
     def __repr__(self):
         return 'KG'
@@ -20,16 +21,19 @@ class King(ChessPiece):
         match self.color:
             case 'white':
                 if new_square in self.attacking_squares and new_square not in self.Chessboard.white_threatens:
+                    old_y, old_x = self.position
+                    new_y, new_x = new_square
+                    self.Chessboard.chessboard[old_y][old_x] = 0
+                    self.Chessboard.chessboard[new_y][new_x] = self
+
                     self.position = new_square
-                    self.attacking_squares = self.refresh_possible_moves()
-                    self.Chessboard.update_threatened_squares(color=self.color)
+                    self.Chessboard.refresh_all_possible_moves()
                 else:
                     print(f'Move to square {new_square}not possible, handle error')
             case 'black':
                 if new_square in self.attacking_squares and new_square not in self.Chessboard.black_threatens:
                     self.position = new_square
-                    self.attacking_squares = self.refresh_possible_moves()
-                    self.Chessboard.update_threatened_squares(color=self.color)
+                    self.Chessboard.refresh_all_possible_moves()
                 else:
                     print(f'Move to square {new_square}not possible, handle error')
 
