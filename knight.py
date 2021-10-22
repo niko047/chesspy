@@ -19,6 +19,9 @@ class Knight(ChessPiece):
         """
 
         if new_square in self.attacking_squares:
+            self.Chessboard.referee_controls(color=self.color,
+                                             move_from=self.position,
+                                             move_to=new_square)
 
             old_y, old_x = self.position
             new_y, new_x = new_square

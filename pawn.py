@@ -23,14 +23,18 @@ class Pawn(ChessPiece):
         """
 
         if new_square in self.attacking_squares :
+            self.Chessboard.referee_controls(color=self.color,
+                                             move_from=self.position,
+                                             move_to=new_square)
+
             old_y, old_x = self.position
             new_y, new_x = new_square
             self.Chessboard.chessboard[old_y][old_x] = 0
             self.Chessboard.chessboard[new_y][new_x] = self
 
+
             self.position = new_square
             #Updates the algebraic notation
-            self.algebraic_notation = COORDINATE_MAPPER_X[self.position[1]]
             self.Chessboard.refresh_all_possible_moves()
         else:
             print(f'Move to square {new_square}not possible, handle error')

@@ -7,6 +7,8 @@ from king import King
 from utils.coordinates_mapper import COORDINATE_MAPPER_X, COORDINATE_MAPPER_Y
 
 class Chessboard:
+    #TODO - Implement checkmate
+    #TODO - Implement stalemate
 
     def __init__(self):
         self.chessboard = [
@@ -82,18 +84,21 @@ class Chessboard:
                 King(position=(y, 4), color='white', Chessboard=self) if y else \
                 King(position=(y, 4), color='black', Chessboard=self)
 
-    def referee_controls(self, color: str, move: str, possible_moves: list):
+    def referee_controls(self, color: str, move_from: tuple, move_to: tuple):
         if self.moves_log['turn'] != color:
-            raise Exception(f'It is {color}\'s turn to play')
+            raise Exception(f'It is {self.moves_log["turn"]}\'s turn to play')
         else:
-            if move in possible_moves:
-                self.moves_log[self.moves_count] = {color[0]: }
-                self.moves_count += 1
-                return True
-            else:
-                raise Exception(f'Move to go to square {move} is not available')
+            self.moves_log[self.moves_count] = self.record_move(move_from, move_to)
+            self.moves_count += 1
+            self.moves_log['turn'] = 'white' if self.moves_log['turn'] == 'black' else 'black'
 
-    def algebraic_chess_annotation(self, move, piece_1, piece_2):
+    def record_move(self, square_1, square_2):
+        return {'piece_from': self.chessboard[square_1[0]][square_1[1]].piece_name,
+                'square_from': square_1,
+                'piece_to': self.chessboard[square_2[0]][square_2[1]].piece_name if \
+                    self.chessboard[square_2[0]][square_2[1]] else 'nan',
+                'square_to': square_2}
+
 
 
 
