@@ -1,6 +1,13 @@
-from chessboard import *
+from chessboard import Chessboard
 
 c = Chessboard()
+
+c.chessboard[6][1].move((4,1))
+c.chessboard[1][2].move((3,2))
+c.chessboard[4][1].move((3,1))
+c.chessboard[1][0].move((3,0))
+c.chessboard[3][1].attacking_squares
+c.en_passantable_pawns
 
 #Check that all the figures in upper rows are black and in lower they are white
 for i in c.chessboard[:2]:

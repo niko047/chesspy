@@ -15,6 +15,14 @@ class Chessboard:
             [0 for i in range(8)] for i in range(8)
         ]
         self.initial_setup()
+        self.moves_count = 0
+        self.moves_log = {"turn": "white"}
+        # {int : {'w': str, 'b': str}}
+
+        self.black_threatens = self.get_all_threatened_squares(threatening='black')
+        self.white_threatens = self.get_all_threatened_squares(threatening='white')
+        self.en_passantable_pawns = {}
+
         #Update the threatening position of every piece and the overall threatens of the player
         for y in range(len(self.chessboard)):
             for x in range(len(self.chessboard[y])):
@@ -22,12 +30,7 @@ class Chessboard:
                     self.chessboard[y][x].refresh_possible_moves()
 
 
-        self.moves_count = 0
-        self.moves_log = {"turn": "white"}
-        #{int : {'w': str, 'b': str}}
 
-        self.black_threatens = self.get_all_threatened_squares(threatening='black')
-        self.white_threatens = self.get_all_threatened_squares(threatening='white')
 
 
     def __repr__(self):
