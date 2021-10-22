@@ -2,7 +2,9 @@ from chesspiece import ChessPiece
 import itertools
 
 class King(ChessPiece):
+
     #TODO - Handle checks
+
     def __init__(self, position: tuple, color: str, Chessboard) -> None:
         super().__init__(position=position,
                          color=color,

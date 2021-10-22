@@ -25,6 +25,8 @@ c.chessboard[1][2].move((2,2))
 
 
 #Tests for en passant
+from chessboard import Chessboard
+c = Chessboard()
 c.chessboard[6][1].move((4,1))
 c.chessboard[1][2].move((3,2))
 c.chessboard[4][1].move((3,1))
@@ -32,3 +34,10 @@ c.chessboard[1][0].move((3,0))
 c.chessboard[3][1].attacking_squares
 c.en_passantable_pawns
 c.chessboard[3][1].move((2,0))
+c.chessboard[0][1].move((2,2)) #kc6
+c.chessboard[2][0].move((1,1)) #axb7
+c.chessboard[0][0].move((6,0)) #rxa1
+c.chessboard[1][1].move((0,2)) #bxkc8 and promoted to queen on the board
+c.chessboard[0][3].move((0,2)) #black queen takes newly promoted white queen
+
+

@@ -2,8 +2,6 @@ from chesspiece import ChessPiece
 from utils.coordinates_mapper import COORDINATE_MAPPER_X
 
 class Pawn(ChessPiece):
-    #TODO - Handle promotion of the pawn to something else
-    #TODO - Handle au passant
 
     def __init__(self, position: tuple, color: str, Chessboard) -> None:
         super().__init__(position=position,
@@ -34,12 +32,9 @@ class Pawn(ChessPiece):
             #I need to know if last move was au-passantable
             is_last_move_au_passantable = self.Chessboard.moves_count - 1 in self.Chessboard.en_passantable_pawns
             if is_last_move_au_passantable:
-                print(f'Last move was au_passantable')
                 passant_y, passant_x = self.Chessboard.en_passantable_pawns[self.Chessboard.moves_count - 1]\
                     .get('move_to')
                 #If this pawn is next to the pawn that made the 2 moves ahead, y does not change, x does +- 1
-                print(f'New x for pawn is {new_x} while new y is {new_y}')
-                print(f'Captured pawn x is {passant_x} while y is {passant_y}')
                 if new_x == passant_x:
                     #Right side of the passant, remove the black passant pawn and move white pawn there
                     self.Chessboard.chessboard[passant_y][passant_x] = 0
@@ -63,13 +58,18 @@ class Pawn(ChessPiece):
         match self.color:
             case 'white':
                 #Speaking moving forward
-                if self.position[0] == 6:
-                    attacking_squares.extend([(self.position[0] - 1, self.position[1])])
-                    attacking_squares.extend([(self.position[0] - 2, self.position[1])])
-                elif self.position[0] > 0:
-                    attacking_squares.extend([(self.position[0] - 1, self.position[1])])
-
                 opponent_pieces_positions = self.Chessboard.occupied_squares(color='black')
+
+                if self.position[0] == 6:
+                    attacking_squares.extend([(self.position[0] - 1, self.position[1])]) if not (self.position[0] - 1, self.position[1]) \
+                        in opponent_pieces_positions else None
+                    attacking_squares.extend([(self.position[0] - 2, self.position[1])]) if not (self.position[0] - 2, self.position[1]) \
+                        in opponent_pieces_positions else None
+                elif self.position[0] > 0:
+                    attacking_squares.extend([(self.position[0] - 1, self.position[1])]) if not (self.position[0] - 1, self.position[1]) \
+                        in opponent_pieces_positions else None
+
+
 
                 en_passant_move = self.Chessboard.moves_count  in self.Chessboard.en_passantable_pawns
                 if en_passant_move:
@@ -97,14 +97,18 @@ class Pawn(ChessPiece):
 
             case 'black':
                 #Speaking captures of pieces
+                opponent_pieces_positions = self.Chessboard.occupied_squares(color='white')
 
                 if self.position[0] == 1:
-                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])
-                    attacking_squares.extend([(self.position[0] + 2, self.position[1])])
+                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])if not (self.position[0] + 1, self.position[1]) \
+                        in opponent_pieces_positions else None
+                    attacking_squares.extend([(self.position[0] + 2, self.position[1])])if not (self.position[0] + 2, self.position[1]) \
+                        in opponent_pieces_positions else None
                 elif self.position[0] < 7:
-                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])
+                    attacking_squares.extend([(self.position[0] + 1, self.position[1])])if not (self.position[0] + 1, self.position[1]) \
+                        in opponent_pieces_positions else None
 
-                opponent_pieces_positions = self.Chessboard.occupied_squares(color='white')
+
 
                 #Check if last move was en passant
                 en_passant_move = self.Chessboard.moves_count  in self.Chessboard.en_passantable_pawns
